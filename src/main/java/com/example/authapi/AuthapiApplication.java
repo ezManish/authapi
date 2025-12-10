@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthapiApplication {
 
 	public static void main(String[] args) {
+		// Force IPv4 to fix Render/Gmail timeout issues
+		System.setProperty("java.net.preferIPv4Stack", "true");
 		SpringApplication.run(AuthapiApplication.class, args);
 	}
 
