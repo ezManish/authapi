@@ -56,6 +56,10 @@ public class ForgotPasswordController {
             // 🔴 IMPORTANT: change this to your real frontend URL
             String resetLink = "https://vittles-reset.vercel.app/reset-password/" + token;
 
+            System.out.println(
+                    "Attempting to send email to: " + email + " using host: " + System.getProperty("spring.mail.host")); // Debug
+                                                                                                                         // Log
+
             // Send email
             mailService.sendResetLink(email, resetLink);
 
