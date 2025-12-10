@@ -15,6 +15,25 @@ public class MailService {
 
     @org.springframework.scheduling.annotation.Async
     public void sendResetLink(String to, String resetLink) throws MessagingException {
+        // Force manual configuration to bypass application.properties issues
+        if (mailSender instanceof org.springframework.mail.javamail.JavaMailSenderImpl) {
+            org.springframework.mail.javamail.JavaMailSenderImpl senderImpl = (org.springframework.mail.javamail.JavaMailSenderImpl) mailSender;
+            senderImpl.setHost("smtp.gmail.com");
+            senderImpl.setPort(587);
+            senderImpl.setProtocol("smtp");
+
+            java.util.Properties props = senderImpl.getJavaMailProperties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
+            props.put("mail.smtp.ssl.trust", "*");
+            props.put("mail.smtp.connectiontimeout", "45000"); // 45 seconds
+            props.put("mail.smtp.timeout", "45000");
+            props.put("mail.smtp.writetimeout", "45000");
+
+            System.out.println("DEBUG: Forcing Mail Config: " + senderImpl.getHost() + ":" + senderImpl.getPort());
+        }
+
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
