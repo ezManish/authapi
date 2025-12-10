@@ -19,19 +19,21 @@ public class MailService {
         if (mailSender instanceof org.springframework.mail.javamail.JavaMailSenderImpl) {
             org.springframework.mail.javamail.JavaMailSenderImpl senderImpl = (org.springframework.mail.javamail.JavaMailSenderImpl) mailSender;
             senderImpl.setHost("smtp.gmail.com");
-            senderImpl.setPort(587);
+            senderImpl.setPort(465);
             senderImpl.setProtocol("smtp");
 
             java.util.Properties props = senderImpl.getJavaMailProperties();
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.starttls.required", "true");
+            props.put("mail.smtp.ssl.enable", "true"); // Enable SSL for port 465
+            props.put("mail.smtp.starttls.enable", "false"); // Disable STARTTLS for port 465
             props.put("mail.smtp.ssl.trust", "*");
-            props.put("mail.smtp.connectiontimeout", "45000"); // 45 seconds
+            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); // Explicit socket factory
+            props.put("mail.smtp.connectiontimeout", "45000");
             props.put("mail.smtp.timeout", "45000");
             props.put("mail.smtp.writetimeout", "45000");
 
-            System.out.println("DEBUG: Forcing Mail Config: " + senderImpl.getHost() + ":" + senderImpl.getPort());
+            System.out.println(
+                    "DEBUG: Forcing Mail Config: " + senderImpl.getHost() + ":" + senderImpl.getPort() + " (SSL)");
         }
 
         MimeMessage message = mailSender.createMimeMessage();
